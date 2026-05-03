@@ -1,0 +1,14 @@
+{
+  "name": "peripheral",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "cert:prepare": "node -e \"require('fs').mkdirSync('cert',{recursive:true})\"",
+    "cert:generate": "npm run cert:prepare && openssl req -x509 -nodes -newkey rsa:2048 -days 825 -keyout cert/localhost-key.pem -out cert/localhost-cert.pem -subj \"/C=US/ST=Local/L=Local/O=Peripheral/CN=localhost\" -addext \"subjectAltName=DNS:localhost,IP:127.0.0.1\"",
+    "dev:https": "http-server . -p 5173 -c-1 -S -C cert/localhost-cert.pem -K cert/localhost-key.pem",
+    "dev": "npm run cert:generate && npm run dev:https"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
