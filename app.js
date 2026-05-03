@@ -326,10 +326,11 @@ function renderVoronoiFrame() {
 
   const srcCtx = state.sourceCtx;
 
-  // Keep processing in camera-native coordinates; visual mirroring is applied
-  // at display time in CSS so orientation changes stay intuitive on mobile.
-  srcCtx.setTransform(1, 0, 0, 1, 0, 0);
+  // Mirror horizontally at the pixel level so seed coordinates are already in
+  // mirrored space; this keeps behaviour consistent across all device orientations.
+  srcCtx.setTransform(-1, 0, 0, 1, state.width, 0);
   srcCtx.drawImage(ui.video, 0, 0, state.width, state.height);
+  srcCtx.setTransform(1, 0, 0, 1, 0, 0);
 
   if (state.dirtyMap) {
     buildPixelSeedMap();
@@ -601,6 +602,28 @@ window.addEventListener("resize", () => {
     resizeProcessingBuffers();
     buildWeightedSeeds();
   }, 220);
+});
+
+// On mobile, orientation changes update videoWidth/videoHeight but the resize
+// event may fire before the video stream updates its dimensions. Poll briefly
+// after orientation change to catch the new dimensions once they settle.
+const orientationTarget = screen.orientation ?? window;
+const orientationEvent = screen.orientation ? "change" : "orientationchange";
+orientationTarget.addEventListener(orientationEvent, () => {
+  if (!state.started) {
+    return;
+  }
+  // Initial resize with current (possibly stale) dimensions.
+  resizeProcessingBuffers();
+  buildWeightedSeeds();
+  // Re-check after a short delay to pick up any dimension update from the stream.
+  window.setTimeout(() => {
+    if (!state.started) {
+      return;
+    }
+    resizeProcessingBuffers();
+    buildWeightedSeeds();
+  }, 400);
 });
 
 bindControls();
