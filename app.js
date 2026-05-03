@@ -326,11 +326,24 @@ function renderVoronoiFrame() {
 
   const srcCtx = state.sourceCtx;
 
-  // Mirror horizontally at the pixel level so seed coordinates are already in
-  // mirrored space; this keeps behaviour consistent across all device orientations.
-  srcCtx.setTransform(-1, 0, 0, 1, state.width, 0);
-  srcCtx.drawImage(ui.video, 0, 0, state.width, state.height);
-  srcCtx.setTransform(1, 0, 0, 1, 0, 0);
+  // On Android Firefox, drawImage(video) delivers raw sensor pixels without
+  // the orientation correction the browser applies to the <video> element itself.
+  // We counter-rotate by the current screen orientation angle to undo that, then
+  // apply a horizontal flip so the result reads as a natural mirror image.
+  const cx = state.width / 2;
+  const cy = state.height / 2;
+  const orientationAngle = screen.orientation
+    ? screen.orientation.angle
+    : typeof window.orientation === "number"
+      ? window.orientation
+      : 0;
+  const rad = -(orientationAngle * Math.PI) / 180;
+  srcCtx.save();
+  srcCtx.translate(cx, cy);
+  srcCtx.rotate(rad);
+  srcCtx.scale(-1, 1);
+  srcCtx.drawImage(ui.video, -cx, -cy, state.width, state.height);
+  srcCtx.restore();
 
   if (state.dirtyMap) {
     buildPixelSeedMap();
