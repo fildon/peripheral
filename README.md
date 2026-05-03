@@ -58,7 +58,8 @@ Open:
 ## First-Run Notes
 
 - Browser will likely show a warning for the self-signed certificate.
-- Proceed to the site and then allow camera access when prompted.
+- The app attempts to start the camera automatically on page load.
+- Allow camera access when the browser permission prompt appears.
 - Webcam APIs require a secure context, so `file://` is not sufficient.
 
 ## Deployment Notes

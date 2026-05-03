@@ -4,45 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Peripheral Voronoi Camera</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="page-noise" aria-hidden="true"></div>
-    <main class="app-shell">
-      <header class="hero">
-        <p class="eyebrow">Live Camera Processing</p>
-        <h1>Peripheral Voronoi Falloff</h1>
-        <p class="subtitle">
-          Center detail stays sharp while edges collapse into noisy Voronoi-like
-          cells.
-        </p>
-      </header>
+    <main>
+      <h1>Peripheral</h1>
+      <p>
+        Live webcam effect with center-preserving detail and reduced peripheral
+        resolution.
+      </p>
 
-      <section class="stage-wrap">
+      <section id="feedSection">
         <canvas id="view" aria-label="Processed webcam feed"></canvas>
         <video id="sourceVideo" playsinline autoplay muted></video>
-        <div class="status-strip">
-          <span id="cameraStatus" class="status-pill">Camera: idle</span>
-          <span id="fpsStatus" class="status-pill">FPS: --</span>
-          <span id="resolutionStatus" class="status-pill">Resolution: --</span>
+        <div class="status-row">
+          <span id="cameraStatus">Camera: idle</span>
+          <span id="fpsStatus">FPS: --</span>
+          <span id="resolutionStatus">Resolution: --</span>
         </div>
       </section>
 
-      <section class="controls-wrap" aria-label="Effect controls">
+      <section aria-label="Effect controls">
         <div class="button-row">
-          <button id="startBtn" type="button">Start Camera</button>
-          <button id="resetBtn" type="button" class="ghost">
-            Reset Defaults
-          </button>
+          <button id="fullscreenBtn" type="button">Fullscreen</button>
+          <button id="resetBtn" type="button">Reset Defaults</button>
         </div>
 
-        <div class="control-grid">
+        <div class="controls-grid">
           <label>
             <span>Seed Count</span>
             <output id="seedCountValue">900</output>
@@ -50,7 +38,7 @@
               id="seedCount"
               type="range"
               min="300"
-              max="1800"
+              max="3600"
               step="20"
               value="900"
             />

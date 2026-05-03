@@ -1,7 +1,8 @@
 const ui = {
   video: document.getElementById("sourceVideo"),
   canvas: document.getElementById("view"),
-  startBtn: document.getElementById("startBtn"),
+  feedSection: document.getElementById("feedSection"),
+  fullscreenBtn: document.getElementById("fullscreenBtn"),
   resetBtn: document.getElementById("resetBtn"),
   cameraStatus: document.getElementById("cameraStatus"),
   fpsStatus: document.getElementById("fpsStatus"),
@@ -434,6 +435,35 @@ function bindControls() {
     applyDefaults();
     readControls();
   });
+
+  ui.fullscreenBtn.addEventListener("click", toggleFullscreen);
+}
+
+function updateFullscreenButtonLabel() {
+  const isFullscreen = document.fullscreenElement === ui.feedSection;
+  ui.fullscreenBtn.textContent = isFullscreen
+    ? "Exit Fullscreen"
+    : "Fullscreen";
+}
+
+async function toggleFullscreen() {
+  if (!document.fullscreenEnabled) {
+    setStatus("fullscreen unsupported");
+    return;
+  }
+
+  try {
+    const isFullscreen = document.fullscreenElement === ui.feedSection;
+
+    if (isFullscreen) {
+      await document.exitFullscreen();
+    } else {
+      await ui.feedSection.requestFullscreen();
+    }
+  } catch (error) {
+    setStatus("fullscreen denied");
+    console.error(error);
+  }
 }
 
 function makeSeedWeight(distanceFromCenter) {
@@ -574,8 +604,13 @@ window.addEventListener("resize", () => {
   }, 220);
 });
 
-ui.startBtn.addEventListener("click", startCamera);
 bindControls();
 applyDefaults();
 setStatus("idle");
 ui.fpsStatus.textContent = "FPS: --";
+updateFullscreenButtonLabel();
+
+document.addEventListener("fullscreenchange", updateFullscreenButtonLabel);
+
+// Attempt camera startup immediately so no manual "start" interaction is required.
+startCamera();
