@@ -326,11 +326,10 @@ function renderVoronoiFrame() {
 
   const srcCtx = state.sourceCtx;
 
-  // Mirror the camera feed so motion feels natural like a front-facing preview.
-  srcCtx.setTransform(-1, 0, 0, 1, state.width, 0);
-
-  srcCtx.drawImage(ui.video, 0, 0, state.width, state.height);
+  // Keep processing in camera-native coordinates; visual mirroring is applied
+  // at display time in CSS so orientation changes stay intuitive on mobile.
   srcCtx.setTransform(1, 0, 0, 1, 0, 0);
+  srcCtx.drawImage(ui.video, 0, 0, state.width, state.height);
 
   if (state.dirtyMap) {
     buildPixelSeedMap();

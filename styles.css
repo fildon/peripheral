@@ -31,10 +31,12 @@ section {
 #view {
   display: block;
   width: 100%;
+  height: auto;
   max-width: 100%;
   border: 1px solid #ccc;
   background: #000;
-  aspect-ratio: 16 / 9;
+  transform: scaleX(-1);
+  transform-origin: center;
 }
 
 #sourceVideo {
@@ -49,10 +51,9 @@ section {
 
 #feedSection:fullscreen #view {
   width: 100%;
-  height: calc(100vh - 3rem);
-  max-height: 100vh;
+  height: auto;
+  max-height: calc(100vh - 3rem);
   border: 0;
-  object-fit: contain;
 }
 
 #feedSection:fullscreen .status-row {
